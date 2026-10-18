@@ -1,0 +1,1726 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Кабинет эксперта · v14</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper: #F2F0E7;
+    --canvas: #FDFCF9;
+    --ink: #211F1C;
+    --ink-soft: #565248;
+    --ink-faint: #8B8578;
+    --rule: #DDD8CA;
+    --rule-strong: #C7C0AC;
+
+    --red: #B23A2E;
+    --red-bg: #F8E3DF;
+    --red-bg-strong: #F1C6BE;
+
+    --amber: #A6690B;
+    --amber-bg: #F6E3C3;
+    --amber-bg-strong: #EFCB8E;
+
+    --blue: #3B5BA5;
+    --blue-bg: #E1E6F3;
+    --blue-bg-strong: #C7D0EA;
+
+    --violet: #70405F;
+    --violet-bg: #EEE0E9;
+    --violet-bg-strong: #DDBFD1;
+
+    --green: #3E7350;
+    --green-bg: #DEEAE0;
+    --green-bg-strong: #C0DAC6;
+
+    --shadow: 0 10px 30px -12px rgba(33,31,28,0.25);
+    --radius: 10px;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .wrap{max-width:1180px;margin:0 auto;padding:28px 20px 80px;}
+
+  header.top{
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    gap:20px;
+    padding-bottom:22px;
+    margin-bottom:26px;
+    border-bottom:2px solid var(--ink);
+    flex-wrap:wrap;
+  }
+  header.top .brand{display:flex; align-items:baseline; gap:12px;}
+  .home-trigger{cursor:pointer; border-radius:6px; color:inherit; text-decoration:none;}
+  .home-trigger:focus-visible{outline:2px solid var(--blue); outline-offset:4px;}
+  header.top .mark{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    letter-spacing:.14em;
+    color:var(--red);
+    border:1.5px solid var(--red);
+    padding:3px 7px;
+    border-radius:3px;
+    transform:rotate(-2deg);
+    white-space:nowrap;
+  }
+  header.top h1{
+    font-family:'Source Serif 4',serif;
+    font-weight:700;
+    font-size:32px;
+    margin:0;
+    letter-spacing:-0.01em;
+  }
+  header.top p{
+    margin:6px 0 0;
+    color:var(--ink-soft);
+    font-size:15px;
+    max-width:46ch;
+  }
+
+  /* step sections */
+  .step{
+    background:var(--canvas);
+    border:1px solid var(--rule);
+    border-radius:var(--radius);
+    padding:22px 24px;
+    margin-bottom:18px;
+  }
+  .step.done{
+    padding:14px 20px;
+  }
+  .step-head{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    justify-content:space-between;
+    flex-wrap:wrap;
+  }
+  .step-head .left{display:flex; align-items:center; gap:12px;}
+  .step-num{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:13px;
+    width:26px;height:26px;
+    border-radius:50%;
+    border:1.5px solid var(--ink);
+    display:flex;align-items:center;justify-content:center;
+    flex:none;
+  }
+  .step.complete .step-num{background:var(--green); border-color:var(--green); color:#fff;}
+  .step h2{
+    font-family:'Source Serif 4',serif;
+    font-size:20px;
+    margin:0;
+    font-weight:600;
+  }
+  .step .hint{font-size:13.5px; color:var(--ink-faint);}
+  .step-body{margin-top:16px;}
+  .step.done .step-body{display:none;}
+  .step.done .step-head{margin-bottom:0;}
+  .summary-line{font-size:14px; color:var(--ink-soft);}
+  .link-btn{
+    background:none;border:none;color:var(--blue);text-decoration:underline;
+    font-family:inherit;font-size:13.5px;cursor:pointer;padding:0;
+  }
+
+  textarea#sourceText{
+    width:100%;
+    height:320px;
+    min-height:180px;
+    max-height:75vh;
+    resize:vertical;
+    overflow-y:auto;
+    border:1px solid var(--rule-strong);
+    border-radius:8px;
+    padding:16px 18px;
+    font-family:'Source Serif 4',serif;
+    font-size:17px;
+    line-height:1.65;
+    color:var(--ink);
+    background:#fff;
+  }
+  textarea#sourceText:focus{outline:2px solid var(--blue); outline-offset:1px;}
+  .meta-row{
+    display:flex; justify-content:space-between; align-items:center;
+    margin-top:8px; font-size:12.5px; color:var(--ink-faint);
+    font-family:'IBM Plex Mono',monospace;
+  }
+
+  .dropzone{
+    border:2px dashed var(--rule-strong);
+    border-radius:8px;
+    padding:26px 20px;
+    text-align:center;
+    cursor:pointer;
+    background:#fff;
+    transition:border-color .15s, background .15s;
+  }
+  .dropzone:hover, .dropzone.drag{
+    border-color:var(--blue);
+    background:var(--blue-bg);
+  }
+  .dropzone .icon{font-size:26px; margin-bottom:6px;}
+  .dropzone .title{font-weight:600; font-size:15px;}
+  .dropzone .sub{font-size:13px; color:var(--ink-faint); margin-top:3px;}
+  .dropzone input{display:none;}
+
+  .file-chip{
+    display:inline-flex; align-items:center; gap:8px;
+    background:var(--green-bg); border:1px solid var(--green-bg-strong);
+    color:var(--green); padding:6px 12px; border-radius:20px;
+    font-size:13.5px; font-weight:600;
+  }
+  .file-chip button{
+    background:none;border:none;color:var(--green);cursor:pointer;
+    font-size:15px; line-height:1; padding:0;
+  }
+
+  details.example{margin-top:12px;}
+  details.example summary{
+    font-size:13px; color:var(--ink-faint); cursor:pointer; user-select:none;
+  }
+  details.example pre{
+    background:#fff; border:1px solid var(--rule);
+    border-radius:6px; padding:12px 14px; font-size:12px;
+    overflow-x:auto; margin-top:8px; color:var(--ink-soft);
+    font-family:'IBM Plex Mono',monospace;
+  }
+
+  .error-box{
+    margin-top:12px;
+    background:var(--red-bg); border:1px solid var(--red-bg-strong);
+    color:#7A2620; padding:10px 14px; border-radius:8px; font-size:13.5px;
+    display:none;
+  }
+  .error-box.show{display:block;}
+
+  .cta-row{margin-top:20px; display:flex; align-items:center; gap:14px;}
+  button.primary{
+    background:var(--ink); color:#fff; border:none;
+    padding:12px 22px; border-radius:8px; font-size:15px; font-weight:600;
+    cursor:pointer; font-family:'Inter',sans-serif;
+    box-shadow:var(--shadow);
+  }
+  button.primary:disabled{
+    background:#C9C4B6; cursor:not-allowed; box-shadow:none;
+  }
+  button.primary:not(:disabled):hover{background:#000;}
+  .cta-note{font-size:12.5px; color:var(--ink-faint);}
+  .cta-row.loading button.primary{cursor:wait;}
+  .status-spinner{
+    display:none; width:15px; height:15px; border:2px solid rgba(255,255,255,.35);
+    border-top-color:#fff; border-radius:50%; margin-right:8px; vertical-align:-2px;
+    animation:spin .8s linear infinite;
+  }
+  .cta-row.loading .status-spinner{display:inline-block;}
+  .request-timer{
+    display:none; margin-left:7px; font-family:'IBM Plex Mono',monospace;
+    font-size:12px; font-variant-numeric:tabular-nums; opacity:.82; vertical-align:1px;
+  }
+  .cta-row.loading .request-timer{display:inline;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .request-help{
+    margin-top:10px; font-size:12.5px; color:var(--ink-faint); max-width:70ch;
+  }
+
+  /* ===== REVIEW SECTION ===== */
+  #review{display:none;}
+  .review-head{
+    display:flex; justify-content:space-between; align-items:flex-end;
+    flex-wrap:wrap; gap:14px; margin-bottom:18px;
+  }
+  .review-title-row{display:flex; align-items:center; gap:12px; flex-wrap:wrap;}
+  .review-head h2{
+    font-family:'Source Serif 4',serif; font-size:24px; margin:0;
+  }
+  .back-action{
+    display:inline-flex; align-items:center; gap:7px;
+    border:1px solid var(--rule-strong); background:var(--canvas); color:var(--ink-soft);
+    border-radius:7px; padding:6px 10px; font-family:'Inter',sans-serif;
+    font-size:13px; font-weight:600; cursor:pointer;
+  }
+  .back-action:hover{border-color:var(--ink-soft); color:var(--ink); background:#fff;}
+  .back-action:focus-visible{outline:2px solid var(--blue); outline-offset:2px;}
+  .stats-row{display:flex; gap:10px; flex-wrap:wrap;}
+  .stat-chip{
+    font-family:'IBM Plex Mono',monospace; font-size:12.5px;
+    padding:6px 11px; border-radius:20px; border:1px solid transparent;
+    display:flex; align-items:center; gap:6px; cursor:pointer;
+    background:#fff; border-color:var(--rule); color:var(--ink-soft);
+    user-select:none; transition:opacity .15s;
+  }
+  .stat-chip .dot{width:9px;height:9px;border-radius:50%; flex:none;}
+  .stat-chip.off{opacity:.4;}
+  .stat-chip[data-cat="high"] .dot{background:var(--red);}
+  .stat-chip[data-cat="medium"] .dot{background:var(--amber);}
+  .stat-chip[data-cat="error"] .dot{background:var(--violet);}
+  .stat-chip[data-cat="pass"] .dot{background:var(--green);}
+
+  .review-grid{
+    display:grid;
+    grid-template-columns:1fr 340px;
+    gap:22px;
+    align-items:start;
+  }
+  @media (max-width:880px){
+    .review-grid{grid-template-columns:1fr;}
+  }
+
+  .canvas-card{
+    background:var(--canvas);
+    border:1px solid var(--rule);
+    border-radius:var(--radius);
+    padding:32px 36px;
+    font-family:'Source Serif 4',serif;
+    font-size:18px;
+    line-height:1.85;
+    white-space:pre-wrap;
+    word-wrap:break-word;
+  }
+  @media (max-width:600px){
+    .canvas-card{padding:20px 18px; font-size:16.5px;}
+  }
+
+  mark.frag{
+    background:transparent;
+    color:inherit;
+    cursor:pointer;
+    padding:0 1px;
+    border-radius:3px;
+    transition:background .12s;
+    box-decoration-break:clone;
+    -webkit-box-decoration-break:clone;
+  }
+  mark.frag.high{ background:var(--red-bg); border-bottom:2px solid var(--red); }
+  mark.frag.medium{ background:var(--amber-bg); border-bottom:2px solid var(--amber); }
+  mark.frag.error{ background:var(--violet-bg); border-bottom:2px dashed var(--violet); }
+  mark.frag.pass{ background:var(--green-bg); border-bottom:2px dotted var(--green); }
+  mark.frag:hover, mark.frag.active{ background-color:var(--red-bg-strong); }
+  mark.frag.medium:hover, mark.frag.medium.active{ background-color:var(--amber-bg-strong); }
+  mark.frag.error:hover, mark.frag.error.active{ background-color:var(--violet-bg-strong); }
+  mark.frag.pass:hover, mark.frag.pass.active{ background-color:var(--green-bg-strong); }
+  mark.frag.hidden-cat{ background:transparent !important; border-bottom-color:transparent !important; cursor:text; }
+
+  /* sidebar */
+  .sidebar{position:sticky; top:20px; display:flex; flex-direction:column; gap:16px;}
+  .pdf-action{
+    width:100%; border:1px solid var(--ink); background:var(--ink); color:#fff;
+    border-radius:8px; padding:11px 14px; font-family:'Inter',sans-serif;
+    font-size:14px; font-weight:600; cursor:pointer; text-align:center;
+  }
+  .pdf-action:hover{background:#000;}
+  .pdf-action:focus-visible{outline:2px solid var(--blue); outline-offset:2px;}
+  .panel{
+    background:var(--canvas); border:1px solid var(--rule); border-radius:var(--radius);
+    padding:18px 20px;
+  }
+  .panel h3{
+    font-family:'Source Serif 4',serif; font-size:15px; margin:0 0 10px;
+    text-transform:uppercase; letter-spacing:.04em; color:var(--ink-soft);
+  }
+  .legend-item{display:flex; gap:9px; align-items:flex-start; font-size:13px; margin-bottom:9px; color:var(--ink-soft);}
+  .legend-item .sw{width:12px;height:12px;border-radius:3px; margin-top:2px; flex:none;}
+  .legend-item.high .sw{background:var(--red);}
+  .legend-item.medium .sw{background:var(--amber);}
+  .legend-item.error .sw{background:var(--violet);}
+  .legend-item.pass .sw{background:var(--green);}
+
+  #detailPanel .empty{color:var(--ink-faint); font-size:13.5px;}
+  .detail-tag{
+    display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:11px;
+    padding:3px 8px; border-radius:12px; margin-bottom:10px; font-weight:500;
+  }
+  .detail-tag.high{background:var(--red-bg); color:var(--red);}
+  .detail-tag.medium{background:var(--amber-bg); color:var(--amber);}
+  .detail-tag.error{background:var(--violet-bg); color:var(--violet);}
+  .detail-tag.pass{background:var(--green-bg); color:var(--green);}
+  .detail-frag{
+    font-family:'Source Serif 4',serif; font-size:14.5px; font-style:italic;
+    color:var(--ink-soft); border-left:3px solid var(--rule-strong);
+    padding-left:10px; margin:0 0 12px;
+  }
+  .detail-row{margin-bottom:10px;}
+  .detail-row .k{font-size:11.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--ink-faint); margin-bottom:2px;}
+  .detail-row .v{font-size:14px; color:var(--ink);}
+  .detail-row .v a{color:var(--blue);}
+  .detail-unit{border-top:1px solid var(--rule); margin-top:8px; padding-top:8px;}
+  .detail-unit summary{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    cursor:pointer; list-style:none; user-select:none; padding:2px 0 8px;
+  }
+  .detail-unit summary::-webkit-details-marker{display:none;}
+  .detail-unit summary::after{
+    content:'Свернуть'; color:var(--blue); font-size:12px; font-weight:500; white-space:nowrap;
+  }
+  .detail-unit:not([open]) summary::after{content:'Развернуть';}
+  .detail-unit-summary{display:flex; align-items:center; gap:8px; min-width:0;}
+  .detail-unit-number{
+    font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--ink-faint);
+    min-width:1.4em; text-align:right;
+  }
+  .detail-unit-body{padding-top:4px;}
+  .detail-unit .detail-tag{margin-bottom:0;}
+
+  .issue-list{max-height:340px; overflow-y:auto;}
+  .issue-item{
+    padding:9px 10px; border-radius:6px; cursor:pointer; font-size:13px;
+    display:flex; gap:8px; align-items:flex-start; margin-bottom:3px;
+  }
+  .issue-item:hover{background:var(--paper);}
+  .issue-item .dot{width:8px;height:8px;border-radius:50%; margin-top:5px; flex:none;}
+  .issue-item.high .dot{background:var(--red);}
+  .issue-item.medium .dot{background:var(--amber);}
+  .issue-item.error .dot{background:var(--violet);}
+  .issue-item .txt{color:var(--ink-soft); overflow:hidden; text-overflow:ellipsis; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;}
+  .unmatched-note{font-size:12px; color:var(--ink-faint); margin-top:10px;}
+
+
+  @media print{
+    header.top, .step, .review-head .stats-row, .sidebar, .back-action{display:none !important;}
+    body{background:#fff;}
+    .canvas-card{border:none; padding:0; box-shadow:none;}
+    .review-grid{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <a class="brand home-trigger" id="homeBrand" href="./" aria-label="Перейти на главную страницу" title="На главную страницу">
+      <div>
+        <h1>Кабинет эксперта</h1>
+        <p>Вставьте текст, запустите автоматическую проверку и изучите отмеченные места.</p>
+      </div>
+    </a>
+    <a class="mark home-trigger" id="homeMark" href="./" aria-label="Перейти на главную страницу" title="На главную страницу">вычитка</a>
+  </header>
+
+  <!-- STEP 1: TEXT -->
+  <section class="step" id="step1">
+    <div class="step-head">
+      <div class="left">
+        <h2>Текст</h2>
+      </div>
+      <span class="hint" id="step1Hint">Вставьте или напишите текст, который нужно проверить</span>
+    </div>
+    <div class="step-body" id="step1Body">
+      <textarea id="sourceText" placeholder="Вставьте сюда текст экскурсии, лекции или статьи…"></textarea>
+      <div class="meta-row">
+        <span id="wordCount">0 слов</span>
+        <span>Потяните за нижний правый угол, чтобы увеличить поле</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="cta-row" id="actionArea">
+    <button class="primary" id="runBtn" disabled>
+      <span class="status-spinner" aria-hidden="true"></span><span id="runBtnText">Проверить текст</span><span class="request-timer" id="requestTimer" aria-live="polite">00:00</span>
+    </button>
+    <span class="cta-note" id="runNote">Введите текст для проверки</span>
+  </div>
+  <div class="error-box" id="requestError" role="alert"></div>
+  <div class="request-help" id="requestHelp">Проверка может занять несколько минут. Интерфейс должен быть открыт через HTTP или HTTPS.</div>
+
+  <!-- STEP 2: REVIEW -->
+  <section id="review">
+    <div class="review-head">
+      <div class="review-title-row">
+        <button class="back-action" id="backBtn" type="button" aria-label="Вернуться к редактированию текста">← Назад</button>
+        <h2>Проверенный текст</h2>
+      </div>
+      <div class="stats-row" id="statsRow"></div>
+    </div>
+
+    <div class="review-grid">
+      <div class="canvas-card" id="canvas"></div>
+
+      <div class="sidebar">
+        <button class="pdf-action" id="savePdfBtn" type="button">Сохранить в PDF</button>
+
+        <div class="panel">
+          <h3>Обозначения</h3>
+          <div class="legend-item high"><span class="sw"></span> Высокий риск — обнаружена существенная содержательная ошибка</div>
+          <div class="legend-item medium"><span class="sw"></span> Средний риск — формулировка требует уточнения или локальной правки</div>
+          <div class="legend-item error"><span class="sw"></span> Ошибка проверки — недостаточно данных, проблема входа или проверка не завершилась надёжно</div>
+          <div class="legend-item pass"><span class="sw"></span> Проверено — содержательных ошибок не найдено</div>
+        </div>
+
+        <div class="panel" id="detailPanel">
+          <h3>Данные проверки</h3>
+          <div class="empty">Нажмите на выделенный фрагмент, чтобы увидеть объект проверки, проверяемое обоснование и связанный контекст.</div>
+        </div>
+
+        <div class="panel">
+          <h3>Список замечаний</h3>
+          <div class="issue-list" id="issueList"></div>
+          <div class="unmatched-note" id="unmatchedNote"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+(function(){
+  const CAT_LABEL = {
+    high: 'Высокий риск',
+    medium: 'Средний риск',
+    error: 'Ошибка проверки',
+    pass: 'Проверено'
+  };
+
+  const VV_LABEL = {
+    low_risk: 'низкий риск',
+    medium_risk: 'средний риск',
+    high_risk: 'высокий риск',
+    input_problem: 'проблема во входных данных',
+    cannot_verify: 'невозможно надёжно проверить'
+  };
+
+  const ISSUE_LABEL = {
+    none: 'нет',
+    fact: 'фактическая неточность',
+    idea: 'логическая или концептуальная неточность',
+    precision: 'требуется уточнение',
+    metaphor: 'некорректное сравнение или метафора'
+  };
+
+  // Вставьте сюда Production URL узла Webhook из опубликованного workflow n8n.
+  // Пример: https://n8n.example.ru/webhook/expert-review
+  const WEBHOOK_URL = window.EXPERT_REVIEW_WEBHOOK_URL || 'https://YOUR-N8N-DOMAIN/webhook/expert-review';
+  const REQUEST_TIMEOUT_MS = 40 * 60 * 1000;
+  const STORAGE_KEY = 'expert-review-v14-state';
+
+  let sourceText = '';
+  let allUnits = [];
+  let unmatched = [];
+  let activeMark = null;
+  let loadedResults = null;
+  let requestInFlight = false;
+  let requestStartedAt = null;
+  let requestTimerInterval = null;
+  const hiddenCats = new Set();
+
+  const $ = (id) => document.getElementById(id);
+  const ta = $('sourceText');
+
+  function autoGrow(){
+    // Поле остаётся компактным после вставки текста и увеличивается только вручную.
+    if(!ta.style.height) ta.style.height = '320px';
+  }
+
+  function updateWordCount(){
+    const words = ta.value.trim().length ? ta.value.trim().split(/\s+/).length : 0;
+    $('wordCount').textContent = words + ' слов';
+  }
+
+  function formatElapsed(milliseconds){
+    const totalSeconds = Math.max(0, Math.floor(Number(milliseconds || 0) / 1000));
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    if(hours > 0){
+      return String(hours).padStart(2, '0') + ':' +
+        String(minutes).padStart(2, '0') + ':' +
+        String(seconds).padStart(2, '0');
+    }
+
+    return String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
+  }
+
+  function updateRequestTimer(){
+    const elapsed = requestStartedAt ? Date.now() - requestStartedAt : 0;
+    $('requestTimer').textContent = formatElapsed(elapsed);
+  }
+
+  function startRequestTimer(startedAt){
+    requestStartedAt = Number(startedAt) || Date.now();
+    if(requestTimerInterval) clearInterval(requestTimerInterval);
+    updateRequestTimer();
+    requestTimerInterval = setInterval(updateRequestTimer, 1000);
+  }
+
+  function stopRequestTimer(){
+    if(requestTimerInterval) clearInterval(requestTimerInterval);
+    requestTimerInterval = null;
+    requestStartedAt = null;
+    $('requestTimer').textContent = '00:00';
+  }
+
+  function hasOwn(object, key){
+    return Object.prototype.hasOwnProperty.call(object, key);
+  }
+
+  function saveSessionState(overrides = {}){
+    const state = {
+      version: '14',
+      text: hasOwn(overrides, 'text') ? overrides.text : ta.value,
+      view: hasOwn(overrides, 'view')
+        ? overrides.view
+        : requestInFlight
+          ? 'checking'
+          : $('review').style.display === 'block'
+            ? 'review'
+            : 'input',
+      results: hasOwn(overrides, 'results') ? overrides.results : loadedResults,
+      startedAt: hasOwn(overrides, 'startedAt')
+        ? overrides.startedAt
+        : requestInFlight
+          ? requestStartedAt
+          : null,
+      activeUnitId: hasOwn(overrides, 'activeUnitId')
+        ? overrides.activeUnitId
+        : activeMark
+          ? allUnits[Number(activeMark.dataset.idx)]?.id || null
+          : null,
+      hiddenCats: hasOwn(overrides, 'hiddenCats')
+        ? overrides.hiddenCats
+        : Array.from(hiddenCats),
+      savedAt: Date.now()
+    };
+
+    try{
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      return true;
+    }catch(error){
+      console.warn('Не удалось сохранить состояние интерфейса:', error);
+      return false;
+    }
+  }
+
+  function loadSessionState(){
+    try{
+      const raw = sessionStorage.getItem(STORAGE_KEY);
+      if(!raw) return null;
+      const state = JSON.parse(raw);
+      return state && state.version === '14' ? state : null;
+    }catch(error){
+      console.warn('Не удалось восстановить состояние интерфейса:', error);
+      return null;
+    }
+  }
+
+  ta.addEventListener('input', () => {
+    autoGrow();
+    updateWordCount();
+    loadedResults = null;
+    hideRequestError();
+    checkReady();
+    saveSessionState({view:'input', results:null, startedAt:null, activeUnitId:null, hiddenCats:[]});
+  });
+
+  function normalizeResults(parsed){
+    let obj = parsed;
+
+    if(obj && !Array.isArray(obj) && obj.data && typeof obj.data === 'object'){
+      obj = obj.data;
+    }
+
+    if(Array.isArray(obj)){
+      const items = obj.map((item) => item && typeof item === 'object' && 'json' in item ? item.json : item);
+      if(items.length === 1) obj = items[0];
+    }
+
+    if(
+      obj &&
+      typeof obj === 'object' &&
+      Array.isArray(obj.medium_expert_list) &&
+      Array.isArray(obj.high_expert_list) &&
+      Array.isArray(obj.error_expert_list) &&
+      Array.isArray(obj.pass_list)
+    ){
+      return {
+        medium_expert_list: obj.medium_expert_list,
+        high_expert_list: obj.high_expert_list,
+        error_expert_list: obj.error_expert_list,
+        pass_list: obj.pass_list
+      };
+    }
+
+    return null;
+  }
+
+  function cleanUnitValue(value){
+    return value === undefined || value === null ? '' : String(value).trim();
+  }
+
+  function expectedVvFor(category, vv){
+    if(category === 'error') return true;
+    if(category === 'pass') return !vv || vv === 'low_risk';
+    if(category === 'medium') return vv === 'medium_risk';
+    if(category === 'high') return vv === 'high_risk';
+    return false;
+  }
+
+  function markUnitAsError(unit){
+    unit.category = 'error';
+    unit.verification_message = unit.verification_message ||
+      'Автоматическая проверка этого фрагмента не завершилась надёжно. Требуется проверка экспертом.';
+    return unit;
+  }
+
+  function normalizeUnitForUi(item, declaredCategory, order){
+    const unit = item && typeof item === 'object' ? Object.assign({}, item) : {};
+    const vv = cleanUnitValue(unit.vv).toLowerCase();
+
+    unit.id = cleanUnitValue(unit.id);
+    unit.frag = cleanUnitValue(unit.frag);
+    unit.ctx = cleanUnitValue(unit.ctx);
+    unit.vv = vv || unit.vv;
+    unit.category = declaredCategory;
+    unit._order = order;
+    const hasSourceStart = unit.source_start !== null && unit.source_start !== undefined && unit.source_start !== '';
+    const hasSourceEnd = unit.source_end !== null && unit.source_end !== undefined && unit.source_end !== '';
+    unit.source_start = hasSourceStart && Number.isInteger(Number(unit.source_start)) ? Number(unit.source_start) : null;
+    unit.source_end = hasSourceEnd && Number.isInteger(Number(unit.source_end)) ? Number(unit.source_end) : null;
+
+    // error_expert_list всегда остаётся фиолетовым независимо от внутренних полей.
+    if(declaredCategory === 'error'){
+      unit.verification_message = cleanUnitValue(unit.verification_message) ||
+        'Автоматическая проверка этого фрагмента не завершилась надёжно. Требуется проверка экспертом.';
+      return unit;
+    }
+
+    if(!expectedVvFor(declaredCategory, vv)){
+      const received = vv || 'пустое значение';
+      markUnitAsError(
+        unit,
+        'Конфликт категории ответа: юнит получен в списке «' +
+          CAT_LABEL[declaredCategory] + '», но поле vv содержит «' + received +
+          '». Интерфейс направил юнит в ошибку проверки.'
+      );
+    }
+
+    return unit;
+  }
+
+  function unitKey(unit, order){
+    if(unit.id) return 'id:' + unit.id;
+    if(unit.frag || unit.ctx) return 'content:' + unit.frag + '::' + unit.ctx;
+    return 'order:' + order;
+  }
+
+  function collectUnits(cats){
+    const unique = new Map();
+    let order = 0;
+
+    cats.forEach(([declaredCategory, list]) => {
+      (Array.isArray(list) ? list : []).forEach((item) => {
+        const unit = normalizeUnitForUi(item, declaredCategory, order);
+        const key = unitKey(unit, order);
+        order++;
+
+        if(!unique.has(key)){
+          unique.set(key, unit);
+          return;
+        }
+
+        const first = unique.get(key);
+        const categories = [...new Set([first.category, unit.category])];
+        const preferredError = [first, unit].find((candidate) => candidate.category === 'error');
+        const merged = Object.assign({}, preferredError || first, {
+          id: first.id || unit.id,
+          frag: first.frag || unit.frag,
+          ctx: first.ctx || unit.ctx,
+          _order: Math.min(first._order, unit._order)
+        });
+
+        markUnitAsError(
+          merged,
+          'Юнит получен несколько раз' +
+            (categories.length > 1 ? ' и сразу в категориях «' + categories.map((c) => CAT_LABEL[c]).join('», «') + '»' : '') +
+            '. Интерфейс направил его в ошибку проверки.'
+        );
+
+        unique.set(key, merged);
+      });
+    });
+
+    return Array.from(unique.values());
+  }
+
+  function numericUnitId(value){
+    const match = String(value || '').match(/\d+/);
+    return match ? Number(match[0]) : null;
+  }
+
+  function compareUnitOrder(a,b){
+    const aNumber = numericUnitId(a.id);
+    const bNumber = numericUnitId(b.id);
+
+    if(aNumber !== null && bNumber !== null && aNumber !== bNumber){
+      return aNumber - bNumber;
+    }
+    if(aNumber !== null && bNumber === null) return -1;
+    if(aNumber === null && bNumber !== null) return 1;
+    return (a._order || 0) - (b._order || 0);
+  }
+
+  function resolveWebhookUrl(){
+    if(!WEBHOOK_URL || WEBHOOK_URL.includes('YOUR-N8N-DOMAIN')){
+      throw new Error('В HTML не указан Production URL webhook. Замените YOUR-N8N-DOMAIN на адрес вашего n8n.');
+    }
+
+    if(window.location.protocol === 'file:'){
+      throw new Error('Откройте интерфейс через HTTP или HTTPS, а не напрямую как file://.');
+    }
+
+    let url;
+    try{
+      url = new URL(WEBHOOK_URL, window.location.href);
+    }catch(e){
+      throw new Error('В HTML указан некорректный адрес webhook.');
+    }
+
+    if(!['http:', 'https:'].includes(url.protocol)){
+      throw new Error('Webhook должен использовать HTTP или HTTPS.');
+    }
+
+    if(window.location.protocol === 'https:' && url.protocol === 'http:'){
+      throw new Error('HTTPS-страница не может обращаться к HTTP-webhook. Используйте HTTPS для n8n.');
+    }
+
+    return url.href;
+  }
+
+  function setRequestState(loading, note){
+    requestInFlight = loading;
+    $('actionArea').classList.toggle('loading', loading);
+    $('runBtnText').textContent = loading ? 'Проверяем…' : 'Проверить текст';
+    $('runBtn').disabled = loading || !ta.value.trim();
+    ta.disabled = loading;
+    if(loading){
+      if(!requestStartedAt) startRequestTimer();
+    }else{
+      stopRequestTimer();
+    }
+    if(note) $('runNote').textContent = note;
+  }
+
+  function showRequestError(message){
+    const box = $('requestError');
+    box.textContent = message;
+    box.classList.add('show');
+  }
+
+  function hideRequestError(){
+    const box = $('requestError');
+    box.textContent = '';
+    box.classList.remove('show');
+  }
+
+  function checkReady(){
+    const ready = ta.value.trim().length > 0 && !requestInFlight;
+    $('runBtn').disabled = !ready;
+    $('runNote').textContent = ready ? 'Текст готов к проверке' : 'Введите текст для проверки';
+  }
+
+  function httpErrorMessage(status, responseData){
+    const serverMessage = responseData?.message || responseData?.error || '';
+    if(serverMessage) return String(serverMessage);
+
+    if(status === 400) return 'n8n отклонил запрос. Проверьте, что отправляется JSON с непустым полем text.';
+    if(status === 401 || status === 403) return 'Webhook требует авторизацию либо запрос заблокирован настройками доступа.';
+    if(status === 404) return 'Production webhook не найден. Проверьте URL и убедитесь, что workflow опубликован.';
+    if(status === 408 || status === 504) return 'Сервер не успел завершить проверку. Проверьте таймаут reverse proxy и n8n.';
+    if(status === 413) return 'Текст превышает допустимый размер запроса.';
+    if(status >= 500) return `n8n завершил выполнение с серверной ошибкой ${status}. Откройте Executions и найдите упавший запуск.`;
+    return `Сервер вернул ошибку ${status}.`;
+  }
+
+  $('runBtn').addEventListener('click', requestReview);
+  $('savePdfBtn').addEventListener('click', () => window.print());
+  $('backBtn').addEventListener('click', returnToInput);
+
+  window.addEventListener('beforeunload', (event) => {
+    if(requestInFlight){
+      saveSessionState({view:'checking', results:null, startedAt:requestStartedAt});
+      event.preventDefault();
+      event.returnValue = '';
+      return;
+    }
+
+    saveSessionState();
+  });
+
+  function returnToInput(){
+    if(requestInFlight) return;
+
+    if(activeMark) activeMark.classList.remove('active');
+    activeMark = null;
+    $('step1').classList.remove('done', 'complete');
+    $('step1').style.display = 'block';
+    $('step1Body').style.display = 'block';
+    $('review').style.display = 'none';
+    $('actionArea').style.display = 'flex';
+    $('requestHelp').style.display = 'block';
+    loadedResults = null;
+    saveSessionState({view:'input', results:null, startedAt:null, activeUnitId:null, hiddenCats:[]});
+    checkReady();
+    autoGrow();
+    ta.focus();
+    $('step1').scrollIntoView({behavior:'smooth', block:'start'});
+  }
+
+
+  async function requestReview(){
+    const text = ta.value;
+    if(requestInFlight || !text.trim()) return;
+
+    hideRequestError();
+
+    let webhookUrl;
+    try{
+      webhookUrl = resolveWebhookUrl();
+    }catch(error){
+      showRequestError(error.message);
+      $('runNote').textContent = 'Требуется настройка подключения';
+      return;
+    }
+
+    startRequestTimer(Date.now());
+    setRequestState(true, 'Автоматическая проверка выполняется. Не закрывайте страницу.');
+    saveSessionState({view:'checking', results:null, startedAt:requestStartedAt, activeUnitId:null, hiddenCats:[]});
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+
+    try{
+      const response = await fetch(webhookUrl, {
+        method: 'POST',
+        mode: 'cors',
+        credentials: 'omit',
+        cache: 'no-store',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({text}),
+        signal: controller.signal
+      });
+
+      const rawBody = await response.text();
+      let responseData = null;
+
+      if(rawBody.trim()){
+        try{
+          responseData = JSON.parse(rawBody);
+        }catch(e){
+          throw new Error('n8n вернул невалидный JSON. Проверьте узел Respond to Webhook и последний запуск workflow.');
+        }
+      }
+
+      if(!response.ok){
+        throw new Error(httpErrorMessage(response.status, responseData));
+      }
+
+      if(responseData === null){
+        throw new Error('n8n вернул пустой ответ. Проверьте соединение output → Respond to Webhook.');
+      }
+
+      const normalized = normalizeResults(responseData);
+      if(!normalized){
+        throw new Error('Ответ не соответствует v14: нужны medium_expert_list, high_expert_list, error_expert_list и pass_list.');
+      }
+
+      loadedResults = normalized;
+      $('runNote').textContent = 'Проверка завершена';
+      runReview();
+      saveSessionState({view:'review', results:loadedResults, startedAt:null, activeUnitId:null, hiddenCats:[]});
+    }catch(error){
+      console.error('Ошибка автоматической проверки:', error);
+
+      let message;
+      if(error?.name === 'AbortError'){
+        message = 'Проверка превысила лимит ожидания интерфейса. Проверьте выполнение в n8n и таймауты reverse proxy.';
+      }else if(error instanceof TypeError){
+        message = 'Браузер не смог обратиться к webhook. Проверьте домен, HTTPS, CORS и доступность n8n.';
+      }else{
+        message = error?.message || 'Не удалось завершить проверку.';
+      }
+
+      showRequestError(message);
+      $('runNote').textContent = 'Проверка не выполнена';
+      saveSessionState({view:'input', results:null, startedAt:null, activeUnitId:null, hiddenCats:[]});
+    }finally{
+      clearTimeout(timeoutId);
+      setRequestState(false, $('review').style.display === 'block' ? 'Проверка завершена' : $('runNote').textContent);
+    }
+  }
+
+  function resetReviewState(){
+    hiddenCats.clear();
+    if(activeMark) activeMark.classList.remove('active');
+    activeMark = null;
+    $('detailPanel').innerHTML = '<h3>Данные проверки</h3><div class="empty">Нажмите на выделенный фрагмент, чтобы увидеть объект проверки, проверяемое обоснование и связанный контекст.</div>';
+  }
+
+  function runReview(options = {}){
+    if(!loadedResults) return;
+
+    sourceText = ta.value;
+    allUnits = [];
+    unmatched = [];
+    resetReviewState();
+
+    const restoredHiddenCats = Array.isArray(options.hiddenCats) ? options.hiddenCats : [];
+    restoredHiddenCats.forEach((category) => {
+      if(['high','medium','error','pass'].includes(category)) hiddenCats.add(category);
+    });
+
+    const cats = [
+      ['high', loadedResults.high_expert_list],
+      ['medium', loadedResults.medium_expert_list],
+      ['error', loadedResults.error_expert_list],
+      ['pass', loadedResults.pass_list]
+    ];
+
+    allUnits = collectUnits(cats);
+    allUnits.sort(compareUnitOrder);
+
+    buildCanvas();
+    buildStats();
+    buildIssueList();
+    applyCatFilter();
+
+    $('step1').classList.add('done', 'complete');
+    $('step1').style.display = 'none';
+    $('step1Body').style.display = 'none';
+    $('actionArea').style.display = 'none';
+    $('requestHelp').style.display = 'none';
+    $('review').style.display = 'block';
+
+    if(options.activeUnitId){
+      const activeIndex = allUnits.findIndex((unit) => unit.id === options.activeUnitId);
+      if(activeIndex >= 0){
+        const mark = document.querySelector('mark.frag[data-indices~="' + activeIndex + '"]');
+        selectUnit(activeIndex, mark, false);
+      }
+    }
+
+    $('review').scrollIntoView({behavior:options.restored ? 'auto' : 'smooth', block:'start'});
+  }
+
+  function escapeRegex(value){
+    return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+  function escapeHtml(value){
+    return String(value).replace(/[&<>"']/g, (char) => ({
+      '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
+    }[char]));
+  }
+
+  function allOccurrences(text, value){
+    const matches = [];
+    if(!value) return matches;
+    let from = 0;
+
+    while(from <= text.length){
+      const index = text.indexOf(value, from);
+      if(index === -1) break;
+      matches.push({start:index, end:index + value.length});
+      from = index + Math.max(1, value.length);
+    }
+
+    return matches;
+  }
+
+  function canonicalChar(value){
+    if(/[\s\u00A0\u2007\u202F]/u.test(value)) return ' ';
+    if(/[\u200B\u200C\u200D\u2060\uFEFF\u00AD]/u.test(value)) return '';
+    if(/[«»„“”‟]/u.test(value)) return '"';
+    if(/[‘’‚‛]/u.test(value)) return "'";
+    if(/[‐‑‒–—―−]/u.test(value)) return '-';
+    if(value === '…') return '...';
+    return value;
+  }
+
+  function canonicalizeWithMap(value, lowerCase){
+    let canonical = '';
+    const starts = [];
+    const ends = [];
+    let pendingSpace = null;
+
+    for(let i = 0; i < value.length; i++){
+      let token = canonicalChar(value[i].normalize('NFKC'));
+
+      if(token === ' '){
+        if(canonical){
+          if(pendingSpace) pendingSpace.end = i + 1;
+          else pendingSpace = {start:i, end:i + 1};
+        }
+        continue;
+      }
+
+      if(!token) continue;
+
+      if(pendingSpace && canonical){
+        canonical += ' ';
+        starts.push(pendingSpace.start);
+        ends.push(pendingSpace.end);
+        pendingSpace = null;
+      }
+
+      if(lowerCase) token = token.toLocaleLowerCase('ru-RU');
+
+      for(const outputChar of token){
+        canonical += outputChar;
+        starts.push(i);
+        ends.push(i + 1);
+      }
+    }
+
+    return {canonical, starts, ends};
+  }
+
+  function canonicalMatches(sourceCanonical, fragCanonical, rank){
+    const matches = [];
+    const needle = fragCanonical.canonical;
+    if(!needle) return matches;
+    let from = 0;
+
+    while(from <= sourceCanonical.canonical.length){
+      const index = sourceCanonical.canonical.indexOf(needle, from);
+      if(index === -1) break;
+      const last = index + needle.length - 1;
+      matches.push({
+        start: sourceCanonical.starts[index],
+        end: sourceCanonical.ends[last],
+        rank
+      });
+      from = index + 1;
+    }
+
+    return matches;
+  }
+
+  function looseCanonicalizeWithMap(value){
+    let canonical = '';
+    const starts = [];
+    const ends = [];
+
+    for(let i = 0; i < value.length; i++){
+      const normalized = value[i].normalize('NFKC').toLocaleLowerCase('ru-RU');
+
+      for(const char of normalized){
+        // Для резервного сопоставления оставляем буквы и цифры,
+        // игнорируя переносы, пунктуацию, кавычки, тире и скрытые символы.
+        if(!/[\p{L}\p{N}]/u.test(char)) continue;
+        canonical += char;
+        starts.push(i);
+        ends.push(i + 1);
+      }
+    }
+
+    return {canonical, starts, ends};
+  }
+
+  function looseMatches(sourceLoose, fragLoose, rank){
+    const matches = [];
+    const needle = fragLoose.canonical;
+
+    // Короткие последовательности слишком неоднозначны для нечёткого поиска.
+    if(!needle || needle.length < 18) return matches;
+
+    let from = 0;
+    while(from <= sourceLoose.canonical.length){
+      const index = sourceLoose.canonical.indexOf(needle, from);
+      if(index === -1) break;
+      const last = index + needle.length - 1;
+      matches.push({
+        start: sourceLoose.starts[index],
+        end: sourceLoose.ends[last],
+        rank
+      });
+      from = index + 1;
+    }
+
+    return matches;
+  }
+
+  function anchoredLooseMatches(sourceLoose, fragLoose, rank){
+    const matches = [];
+    const needle = fragLoose.canonical;
+    if(!needle || needle.length < 48) return matches;
+
+    const anchorLength = Math.min(30, Math.max(18, Math.floor(needle.length / 4)));
+    const prefix = needle.slice(0, anchorLength);
+    const suffix = needle.slice(-anchorLength);
+    let prefixFrom = 0;
+
+    while(prefixFrom <= sourceLoose.canonical.length){
+      const prefixIndex = sourceLoose.canonical.indexOf(prefix, prefixFrom);
+      if(prefixIndex === -1) break;
+
+      const expectedEnd = prefixIndex + needle.length;
+      const minSuffixStart = Math.max(
+        prefixIndex + anchorLength,
+        expectedEnd - Math.floor(needle.length * 0.25) - anchorLength
+      );
+      const maxSuffixStart = Math.min(
+        sourceLoose.canonical.length - anchorLength,
+        expectedEnd + Math.floor(needle.length * 0.25)
+      );
+
+      const suffixIndex = sourceLoose.canonical.indexOf(suffix, minSuffixStart);
+      if(suffixIndex !== -1 && suffixIndex <= maxSuffixStart){
+        const looseLength = suffixIndex + anchorLength - prefixIndex;
+        const ratio = looseLength / needle.length;
+        if(ratio >= 0.75 && ratio <= 1.25){
+          matches.push({
+            start: sourceLoose.starts[prefixIndex],
+            end: sourceLoose.ends[suffixIndex + anchorLength - 1],
+            rank
+          });
+        }
+      }
+
+      prefixFrom = prefixIndex + 1;
+    }
+
+    return matches;
+  }
+
+  function findAllFragMatches(text, frag, canonicalSource, canonicalSourceLower, looseSource){
+    const value = cleanUnitValue(frag);
+    if(!value) return [];
+
+    const candidates = [];
+    allOccurrences(text, value).forEach((match) => candidates.push({...match, rank:0}));
+
+    const pattern = escapeRegex(value).replace(/\s+/g, '\\s+');
+    try{
+      const regex = new RegExp(pattern, 'g');
+      let match;
+      while((match = regex.exec(text)) !== null){
+        candidates.push({start:match.index, end:match.index + match[0].length, rank:1});
+        if(match[0].length === 0) regex.lastIndex++;
+      }
+    }catch(e){}
+
+    const canonicalFrag = canonicalizeWithMap(value, false);
+    const canonicalFragLower = canonicalizeWithMap(value, true);
+    const looseFrag = looseCanonicalizeWithMap(value);
+    candidates.push(...canonicalMatches(canonicalSource, canonicalFrag, 2));
+    candidates.push(...canonicalMatches(canonicalSourceLower, canonicalFragLower, 3));
+    candidates.push(...looseMatches(looseSource, looseFrag, 4));
+    candidates.push(...anchoredLooseMatches(looseSource, looseFrag, 5));
+
+    const bestByRange = new Map();
+    candidates.forEach((candidate) => {
+      if(!Number.isFinite(candidate.start) || !Number.isFinite(candidate.end)) return;
+      if(candidate.end <= candidate.start) return;
+      const key = candidate.start + ':' + candidate.end;
+      const existing = bestByRange.get(key);
+      if(!existing || candidate.rank < existing.rank){
+        bestByRange.set(key, candidate);
+      }
+    });
+
+    return Array.from(bestByRange.values())
+      .sort((a,b) => a.start - b.start || a.rank - b.rank || b.end - a.end);
+  }
+
+  function spanMatchesFrag(text, start, end, frag, canonicalSource, canonicalSourceLower){
+    if(!Number.isInteger(start) || !Number.isInteger(end)) return false;
+    if(start < 0 || end <= start || end > text.length) return false;
+
+    const segment = text.slice(start, end);
+    if(segment === frag) return true;
+
+    const segmentCanonical = canonicalizeWithMap(segment, false).canonical;
+    const fragCanonical = canonicalizeWithMap(frag, false).canonical;
+    if(segmentCanonical && segmentCanonical === fragCanonical) return true;
+
+    if(canonicalizeWithMap(segment, true).canonical ===
+      canonicalizeWithMap(frag, true).canonical){
+      return true;
+    }
+
+    const looseSegment = looseCanonicalizeWithMap(segment).canonical;
+    const looseFrag = looseCanonicalizeWithMap(frag).canonical;
+    return looseFrag.length >= 18 && looseSegment === looseFrag;
+  }
+
+  function rangeKey(range){
+    return range.start + ':' + range.end;
+  }
+
+  function selectMatchesForUnits(candidateLists, canonicalSource, canonicalSourceLower){
+    const selected = [];
+    const usedByFrag = new Map();
+    let lastStart = -1;
+
+    allUnits.forEach((unit, unitIndex) => {
+      const frag = cleanUnitValue(unit.frag);
+      let chosen = null;
+
+      if(spanMatchesFrag(
+        sourceText,
+        unit.source_start,
+        unit.source_end,
+        frag,
+        canonicalSource,
+        canonicalSourceLower
+      )){
+        chosen = {
+          start: unit.source_start,
+          end: unit.source_end,
+          rank: -1,
+          source: 'offset'
+        };
+      }
+
+      const candidates = candidateLists[unitIndex] || [];
+      if(!chosen && candidates.length){
+        const fragKey = canonicalizeWithMap(frag, true).canonical;
+        const used = usedByFrag.get(fragKey) || new Set();
+        const unused = candidates.filter((candidate) => !used.has(rangeKey(candidate)));
+        const pool = unused.length ? unused : candidates;
+
+        const expectedStart = Number.isInteger(unit.source_start)
+          ? unit.source_start
+          : Math.max(0, lastStart);
+
+        chosen = pool.slice().sort((a,b) => {
+          const aAfter = a.start >= expectedStart ? 0 : 1;
+          const bAfter = b.start >= expectedStart ? 0 : 1;
+          if(aAfter !== bAfter) return aAfter - bAfter;
+
+          const aDistance = Math.abs(a.start - expectedStart);
+          const bDistance = Math.abs(b.start - expectedStart);
+          if(aDistance !== bDistance) return aDistance - bDistance;
+          if(a.rank !== b.rank) return a.rank - b.rank;
+          return a.start - b.start || a.end - b.end;
+        })[0];
+
+        used.add(rangeKey(chosen));
+        usedByFrag.set(fragKey, used);
+      }
+
+      if(!chosen){
+        markUnitAsError(
+          unit,
+          'Фрагмент не удалось сопоставить с исходным текстом. Возможна потеря дословности frag или повреждение результата pipeline.'
+        );
+        unmatched.push(unit);
+        return;
+      }
+
+      unit.source_start = chosen.start;
+      unit.source_end = chosen.end;
+      selected.push({...chosen, unitIndex});
+      lastStart = chosen.start;
+    });
+
+    return selected;
+  }
+
+  function rangesOverlap(a,b){
+    return a.start < b.end && a.end > b.start;
+  }
+
+  function flagOverlappingUnits(matches){
+    for(let i = 0; i < matches.length; i++){
+      for(let j = i + 1; j < matches.length; j++){
+        const a = matches[i];
+        const b = matches[j];
+        if(!rangesOverlap(a,b)) continue;
+        if(a.start === b.start && a.end === b.end && a.unitIndex === b.unitIndex) continue;
+
+        markUnitAsError(
+          allUnits[a.unitIndex],
+          'Границы этого фрагмента пересекаются с другим юнитом. Пересечение отображено как ошибка проверки.'
+        );
+        markUnitAsError(
+          allUnits[b.unitIndex],
+          'Границы этого фрагмента пересекаются с другим юнитом. Пересечение отображено как ошибка проверки.'
+        );
+      }
+    }
+  }
+
+  function categoryPriority(category){
+    return ({error:4, high:3, medium:2, pass:1})[category] || 0;
+  }
+
+  function buildRenderSegments(matches){
+    const boundaries = new Set([0, sourceText.length]);
+    matches.forEach((match) => {
+      boundaries.add(match.start);
+      boundaries.add(match.end);
+    });
+
+    const points = Array.from(boundaries)
+      .filter((point) => Number.isInteger(point) && point >= 0 && point <= sourceText.length)
+      .sort((a,b) => a - b);
+
+    const segments = [];
+    for(let i = 0; i < points.length - 1; i++){
+      const start = points[i];
+      const end = points[i + 1];
+      if(end <= start) continue;
+
+      const covering = matches
+        .filter((match) => match.start < end && match.end > start)
+        .map((match) => match.unitIndex);
+
+      const unitIndices = [...new Set(covering)];
+      if(!unitIndices.length){
+        segments.push({start, end, unitIndices:[], category:null, primaryIndex:null});
+        continue;
+      }
+
+      unitIndices.sort((a,b) => {
+        const priorityDiff = categoryPriority(allUnits[b].category) - categoryPriority(allUnits[a].category);
+        return priorityDiff || compareUnitOrder(allUnits[a], allUnits[b]);
+      });
+
+      const primaryIndex = unitIndices[0];
+      segments.push({
+        start,
+        end,
+        unitIndices,
+        primaryIndex,
+        category: allUnits[primaryIndex].category
+      });
+    }
+
+    return segments;
+  }
+
+  function mergeAdjacentSegments(segments){
+    const merged = [];
+
+    segments.forEach((segment) => {
+      const previous = merged[merged.length - 1];
+      const sameUnits = previous &&
+        previous.category === segment.category &&
+        previous.primaryIndex === segment.primaryIndex &&
+        previous.unitIndices.join(',') === segment.unitIndices.join(',') &&
+        previous.end === segment.start;
+
+      if(sameUnits){
+        previous.end = segment.end;
+      }else{
+        merged.push({...segment});
+      }
+    });
+
+    return merged;
+  }
+
+  function buildCanvas(){
+    const canonicalSource = canonicalizeWithMap(sourceText, false);
+    const canonicalSourceLower = canonicalizeWithMap(sourceText, true);
+    const looseSource = looseCanonicalizeWithMap(sourceText);
+    const candidateLists = allUnits.map((unit) =>
+      findAllFragMatches(
+        sourceText,
+        unit.frag,
+        canonicalSource,
+        canonicalSourceLower,
+        looseSource
+      )
+    );
+
+    const matches = selectMatchesForUnits(
+      candidateLists,
+      canonicalSource,
+      canonicalSourceLower
+    );
+
+    flagOverlappingUnits(matches);
+
+    const segments = mergeAdjacentSegments(buildRenderSegments(matches));
+    let html = '';
+
+    segments.forEach((segment) => {
+      const text = escapeHtml(sourceText.slice(segment.start, segment.end));
+      if(!segment.unitIndices.length){
+        html += text;
+        return;
+      }
+
+      const indices = segment.unitIndices.join(' ');
+      html += '<mark class="frag ' + segment.category + '"' +
+        ' data-idx="' + segment.primaryIndex + '"' +
+        ' data-indices="' + indices + '">' + text + '</mark>';
+    });
+
+    $('canvas').innerHTML = html;
+
+    $('canvas').querySelectorAll('mark.frag').forEach((element) => {
+      element.addEventListener('click', () => selectUnit(Number(element.dataset.idx), element));
+      element.addEventListener('mouseenter', () => {
+        if(!activeMark) previewUnit(Number(element.dataset.idx));
+      });
+    });
+  }
+
+  function applyCatFilter(){
+    document.querySelectorAll('mark.frag').forEach((element) => {
+      const category = [...element.classList].find((name) => ['high','medium','error','pass'].includes(name));
+      element.classList.toggle('hidden-cat', hiddenCats.has(category));
+    });
+  }
+
+  function buildStats(){
+    const counts = {high:0, medium:0, error:0, pass:0};
+    allUnits.forEach((unit) => counts[unit.category]++);
+
+    const order = ['high','medium','error','pass'];
+    $('statsRow').innerHTML = order.map((category) =>
+      '<span class="stat-chip" data-cat="' + category + '"><span class="dot"></span>' +
+      CAT_LABEL[category] + ' · ' + counts[category] + '</span>'
+    ).join('');
+
+    $('statsRow').querySelectorAll('.stat-chip').forEach((chip) => {
+      chip.classList.toggle('off', hiddenCats.has(chip.dataset.cat));
+      chip.addEventListener('click', () => {
+        const category = chip.dataset.cat;
+        if(hiddenCats.has(category)) hiddenCats.delete(category);
+        else hiddenCats.add(category);
+        chip.classList.toggle('off', hiddenCats.has(category));
+        applyCatFilter();
+        saveSessionState({view:'review', results:loadedResults});
+      });
+    });
+  }
+
+  function splitCtx(value){
+    const text = String(value || '').trim();
+    const result = {object:'', rationale:'', related:''};
+    if(!text) return result;
+
+    const keyByLabel = {
+      'объект проверки': 'object',
+      'проверяемое обоснование': 'rationale',
+      'связанный контекст': 'related'
+    };
+
+    const pattern = /(Объект проверки|Проверяемое обоснование|Связанный контекст)\s*-\s*/gi;
+    const matches = [];
+    let match;
+
+    while((match = pattern.exec(text)) !== null){
+      matches.push({
+        key: keyByLabel[match[1].toLocaleLowerCase('ru-RU')],
+        valueStart: pattern.lastIndex,
+        labelStart: match.index
+      });
+    }
+
+    if(!matches.length){
+      result.object = text;
+      return result;
+    }
+
+    matches.forEach((entry, index) => {
+      const next = matches[index + 1];
+      const valueEnd = next ? next.labelStart : text.length;
+      result[entry.key] = text.slice(entry.valueStart, valueEnd).trim();
+    });
+
+    return result;
+  }
+
+  function ctxSummary(value){
+    const parts = splitCtx(value);
+    return parts.object || String(value || '').trim();
+  }
+
+  function buildIssueList(){
+    const list = $('issueList');
+    const relevant = allUnits.map((unit,index) => ({unit,index})).filter(({unit}) => unit.category !== 'pass');
+
+    if(!relevant.length){
+      list.innerHTML = '<div class="empty" style="color:var(--ink-faint);font-size:13px;">Замечаний и ошибок проверки не найдено.</div>';
+    }else{
+      list.innerHTML = relevant.map(({unit,index}) =>
+        '<div class="issue-item ' + unit.category + '" data-idx="' + index + '">' +
+        '<span class="dot"></span><span class="txt">' + escapeHtml(ctxSummary(unit.ctx) || unit.frag || '') + '</span></div>'
+      ).join('');
+
+      list.querySelectorAll('.issue-item').forEach((element) => {
+        element.addEventListener('click', () => {
+          const index = Number(element.dataset.idx);
+          const mark = document.querySelector('mark.frag[data-indices~="' + index + '"]');
+          selectUnit(index, mark);
+          if(mark) mark.scrollIntoView({behavior:'smooth', block:'center'});
+        });
+      });
+    }
+
+    const unmatchedIds = unmatched
+      .map((unit) => unit.id || '?')
+      .slice(0, 12)
+      .join(', ');
+
+    $('unmatchedNote').textContent = unmatched.length
+      ? 'Проблемы сопоставления: ' + unmatched.length + ' фрагмент(ов)' +
+        (unmatchedIds ? ' (' + unmatchedIds + ')' : '') + '. Они направлены в ошибку проверки.'
+      : '';
+  }
+
+  function selectUnit(index, element, persist = true){
+    if(activeMark) activeMark.classList.remove('active');
+    activeMark = element || null;
+    if(activeMark) activeMark.classList.add('active');
+    renderDetail(allUnits[index]);
+    if(persist){
+      saveSessionState({
+        view:'review',
+        results:loadedResults,
+        activeUnitId:allUnits[index]?.id || null
+      });
+    }
+  }
+
+  function previewUnit(index){
+    renderDetail(allUnits[index]);
+  }
+
+  function renderDetail(unit){
+    if(!unit) return;
+
+    let rows = '';
+    const ctx = splitCtx(unit.ctx);
+
+    if(ctx.object){
+      rows += row('Объект проверки', ctx.object);
+    }else if(unit.ctx){
+      rows += row('Контекст проверки', unit.ctx);
+    }
+
+    if(ctx.rationale){
+      rows += row('Проверяемое обоснование', ctx.rationale);
+    }
+
+    if(ctx.related){
+      rows += row('Связанный контекст', ctx.related);
+    }
+
+    if(unit.category === 'pass'){
+      rows += row('Статус', 'Содержательных ошибок не найдено.');
+    }else if(unit.category === 'error'){
+      rows += row(
+        'Сообщение',
+        unit.verification_message ||
+          'Автоматическая проверка этого фрагмента не завершилась надёжно. Требуется проверка экспертом.'
+      );
+    }else{
+      if(unit.issue && ISSUE_LABEL[unit.issue] && unit.issue !== 'none'){
+        rows += row('Тип проблемы', ISSUE_LABEL[unit.issue]);
+      }
+      if(unit.vv && VV_LABEL[unit.vv]){
+        rows += row('Результат verifier', VV_LABEL[unit.vv]);
+      }
+      if(unit.arg){
+        rows += row('Аргументация', unit.arg);
+      }
+
+      if(unit.src){
+        let sourceHtml = '';
+        if(typeof unit.src === 'string'){
+          sourceHtml = escapeHtml(unit.src);
+        }else if(unit.src.url){
+          sourceHtml = '<a href="' + escapeHtml(unit.src.url) + '" target="_blank" rel="noopener noreferrer">' +
+            escapeHtml(unit.src.title || unit.src.url) + '</a>';
+        }else if(unit.src.title){
+          sourceHtml = escapeHtml(unit.src.title);
+        }
+        if(sourceHtml) rows += row('Источник', sourceHtml, true);
+      }
+    }
+
+    const idMatch = String(unit.id || '').match(/\d+/);
+    const unitNumber = idMatch
+      ? String(Number(idMatch[0]))
+      : String(Math.max(1, allUnits.indexOf(unit) + 1));
+
+    $('detailPanel').innerHTML =
+      '<h3>Данные проверки</h3>' +
+      '<details class="detail-unit" open>' +
+        '<summary>' +
+          '<span class="detail-unit-summary">' +
+            '<span class="detail-unit-number">' + escapeHtml(unitNumber) + '</span>' +
+            '<span class="detail-tag ' + unit.category + '">' + CAT_LABEL[unit.category] + '</span>' +
+          '</span>' +
+        '</summary>' +
+        '<div class="detail-unit-body">' +
+          '<p class="detail-frag">«' + escapeHtml((unit.frag || '').trim()) + '»</p>' +
+          rows +
+        '</div>' +
+      '</details>';
+  }
+
+  function row(label, value, raw){
+    return '<div class="detail-row"><div class="k">' + escapeHtml(label) + '</div><div class="v">' +
+      (raw ? value : escapeHtml(value)) + '</div></div>';
+  }
+
+  function restoreSession(){
+    const state = loadSessionState();
+    if(!state) return false;
+
+    if(typeof state.text === 'string') ta.value = state.text;
+    updateWordCount();
+    autoGrow();
+
+    if(state.view === 'review' && state.results){
+      const normalized = normalizeResults(state.results);
+      if(normalized){
+        loadedResults = normalized;
+        runReview({
+          restored:true,
+          hiddenCats:Array.isArray(state.hiddenCats) ? state.hiddenCats : [],
+          activeUnitId:state.activeUnitId || null
+        });
+        return true;
+      }
+    }
+
+    if(state.view === 'checking'){
+      const elapsed = state.startedAt ? formatElapsed(Date.now() - Number(state.startedAt)) : null;
+      checkReady();
+      showRequestError(
+        'Страница была обновлена во время проверки. Текст сохранён, но браузер не может продолжить прежний HTTP-запрос или получить его результат без отдельного ID задания.' +
+        (elapsed ? ' До обновления прошло примерно ' + elapsed + '.' : '') +
+        ' Запустите проверку повторно.'
+      );
+      $('runNote').textContent = 'Проверка прервана обновлением — текст сохранён';
+      saveSessionState({view:'input', results:null, startedAt:null, activeUnitId:null, hiddenCats:[]});
+      return true;
+    }
+
+    checkReady();
+    return false;
+  }
+
+  if(!restoreSession()){
+    updateWordCount();
+    checkReady();
+    autoGrow();
+  }
+})();
+</script>
+</body>
+</html>
